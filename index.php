@@ -13,11 +13,11 @@ include('scissors.php');
 
 $task1 = new scissors();
 $task1->slice();
-echo "<hr>";
+
 
 $task2 = new bubbles();
 $task2->sort();
-echo "<hr>";
+
 
 $task3 = new random();
 $task3->fill_database();

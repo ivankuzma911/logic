@@ -45,7 +45,7 @@ class bubbles extends config{
                 <option value="asc">ASC</option>
                 <option value="desc">DESC</option>
             </select><br>
-                <input type='submit' name='submit' value='Sort it'></form>
+                <input type='submit' name='submit' value='Sort it'></form><hr>
         <?php
     }
 }
