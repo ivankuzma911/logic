@@ -8,7 +8,4 @@ abstract class config
             $database = 'study',
             $user = 'ivan123',
             $password = 'ivan123';
-
-
-
 }

@@ -1,12 +1,19 @@
 <?php
-
+include('config.php');
 class random extends config{
     public $mysqli;
+    public $numberOfOperations =false;
+
+    public function __construct(){
+        $this->fill_database();
+    }
     public function fill_database(){
         $this->mysqli = new mysqli($this->host, $this->user, $this->password, $this->database);
         if(isset($_POST['random_submit'])) {
             $ammount = $_POST['ammount'];
             $increment = $this->getIncrement();
+            $fullTable = $this->getFullTable();
+            $maxId = $this->getMaxId()+1;
             for ($i = 0; $i < $ammount; $i++) {
                 $age = $this->getAge();
                 $name = $this->getName();
@@ -15,21 +22,26 @@ class random extends config{
                 $date = $this->getDate();
 
                 if (!$increment) {
-                    $result = $this->mysqli->query("Select * from $this->table");
-                    if ($result->num_rows == 0) {
+                    if (!$fullTable) {
                         $result = $this->mysqli->query("INSERT INTO $this->table(id,age,fullname,skills,price,date_creation)VALUES (1,'$age','$name','$skill','$price','$date')");
                     } else {
-                        $max_id = $this->mysqli->query("select max(id) from $this->table");
-                        $max_id = $max_id->fetch_assoc();
-                        $max_id = $max_id['max(id)'] + 1;
-                        $result = $this->mysqli->query("INSERT INTO $this->table(id,age,fullname,skills,price,date_creation)VALUES ($max_id,$age,'$name',$skill,'$price','$date')");
+                        $idToDb = $maxId+$i;
+                        $result = $this->mysqli->query("INSERT INTO $this->table(id,age,fullname,skills,price,date_creation)VALUES ($idToDb,$age,'$name',$skill,'$price','$date')");
                     }
                 } else {
                     $result = $this->mysqli->query("INSERT INTO $this->table(age,fullname,skills,price,date_creation)VALUES ($age,'$name',$skill,'$price','$date')");
                 }
             }
+            $this->numberOfOperations = $i;
         }
-       $this->getView();
+       include('random_view.php');
+    }
+
+    public function getMaxId(){
+        $max_id = $this->mysqli->query("select max(id) from $this->table");
+        $max_id = $max_id->fetch_assoc();
+        $max_id = $max_id['max(id)'];
+        return $max_id;
     }
 
     public function getIncrement(){
@@ -38,12 +50,19 @@ class random extends config{
             if ($row['Field'] == 'id') {
                 if ($row['Extra'] == 'auto_increment') {
                     return true;
-                    break;
                 }else{
                     return false;
                 }
             }
         }
+    }
+
+    public function getFullTable(){
+        $result = $this->mysqli->query("Select * from $this->table");
+        if($result->num_rows === 0){
+            return false;
+        }
+        return true;
     }
 
     public function getAge(){
@@ -70,25 +89,7 @@ class random extends config{
     public function getDate(){
         return date("Y-m-d", (rand(1, time())));
     }
-
-    public function getView(){
-        $mysql = $this->mysqli->query("SELECT * from $this->table");
-
-        ?><form action='' method='POST'>
-              Ammount: <input type='text' name='ammount'>
-              <input type='submit' name='random_submit' value='Fill'>
-              </form><table>
-    <?php
-
-        while($row = $mysql->fetch_array()){
-            echo "<tr><td>$row[id]</td>
-            <td>$row[age]</td>
-            <td>$row[fullname]</td>
-            <td>$row[skills]</td>
-            <td>$row[price]</td>
-            <td>$row[date_creation]</td></tr>";
-        }
-            echo "</table>";
-    }
 }
+
+$task3 = new random();
 
