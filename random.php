@@ -14,8 +14,9 @@ class random extends config
 
     public function fill_database()
     {
-        $this->mysqli = new mysqli($this->host, $this->user, $this->password, $this->database);
+
         if (isset($_POST['random_submit'])) {
+            $this->mysqli = new mysqli($this->host, $this->user, $this->password, $this->database);
             $ammount = $_POST['ammount'];
             $db_columns = $this->mysqli->query("SHOW COLUMNS from $this->table");
             while ($row = $db_columns->fetch_assoc()) {
@@ -33,8 +34,9 @@ class random extends config
                 $query = $this->queryBuilder($to_db);
                 $this->mysqli->query($query);
             }
+            $this->numberOfOperations = $i;
         }
-        $this->numberOfOperations = $i;
+
         include('random_view.php');
     }
 
