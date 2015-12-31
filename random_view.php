@@ -7,6 +7,5 @@
     <input type='submit' name='random_submit' value='Fill'>
 </form>
 <?php echo  ($this->numberOfOperations) ?  "Affected rows:$this->numberOfOperations" : null?>
-
 </body>
 </html>
